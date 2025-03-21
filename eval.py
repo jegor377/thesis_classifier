@@ -2,11 +2,12 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from transformers import RobertaTokenizer, RobertaModel
+from tqdm import tqdm
 
 
 from dataset import LiarPlusDataset
 from model import LiarPlusClassifier
-from checkpoint_utils import load_checkpoint
+from checkpoint_utils import load_model
 
 
 def evaluate(model, dataloader, criterion, device):
@@ -16,7 +17,7 @@ def evaluate(model, dataloader, criterion, device):
     total_samples = 0
 
     with torch.no_grad():
-        for batch in dataloader:
+        for batch in tqdm(dataloader, desc="Evaluating"):
             input_ids = batch["input_ids"].to(device)
             attention_mask = batch["attention_mask"].to(device)
             labels = batch["label"].to(device)
@@ -49,12 +50,9 @@ if __name__ == '__main__':
     model = LiarPlusClassifier(roberta, num_classes)
     model.to(device)
 
-    # Dummy optimizer for checkpoint loading (only used to load state, if needed)
-    optimizer = torch.optim.Adam(model.fc.parameters(), lr=1e-3)
-
     # Load the checkpoint (assumes checkpoint.pth is in the project directory)
     checkpoint_path = "checkpoint.pth"
-    load_checkpoint(model, optimizer, checkpoint_path)
+    load_model(model, checkpoint_path)
 
     # Prepare the test dataset and dataloader
     test_dataset = LiarPlusDataset("data/test2.tsv", tokenizer)

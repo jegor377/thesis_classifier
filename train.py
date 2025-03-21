@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import mlflow
 import mlflow.pytorch
+import argparse
 
 from transformers import RobertaModel, RobertaTokenizer
 from torch.utils.data import DataLoader
@@ -12,7 +13,9 @@ from model import LiarPlusClassifier
 from checkpoint_utils import (save_checkpoint, load_checkpoint)
 
 
-def train(train_loader: DataLoader, batch_size: int) -> None:
+def train(train_loader: DataLoader,
+          batch_size: int,
+          resume: bool=False) -> None:
     with mlflow.start_run():
         # Hyperparameters
         num_classes = 6
@@ -29,16 +32,19 @@ def train(train_loader: DataLoader, batch_size: int) -> None:
         model.to(device)
 
         # Define optimizer and loss function
-        optimizer = torch.optim.Adam(model.fc.parameters(), lr=lr)  # Train only the classifier
+        # Train only the classifier
+        optimizer = torch.optim.Adam(model.fc.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss()
         
         # Checkpoint Path
         checkpoint_path = "checkpoint.pth"
         
-        best_loss = float("inf")  # Track best loss for model saving
-
+        # Track best loss for model saving
         # Load Checkpoint (Decide if you want to continue)
-        start_epoch = load_checkpoint(model, optimizer, checkpoint_path)
+        start_epoch, best_loss = load_checkpoint(model,
+                                      optimizer,
+                                      checkpoint_path,
+                                      resume)
 
         # Training loop
         for epoch in range(start_epoch, epochs):
@@ -74,8 +80,17 @@ def train(train_loader: DataLoader, batch_size: int) -> None:
 
 
 if __name__ == '__main__':
-    with open("mlflow_uri_config.txt", "r") as f:
-        mlflow.set_tracking_uri(uri=f.read())
+    parser = argparse.ArgumentParser(
+        prog='train.py',
+        description='Trains LiarPlusClassifier')
+
+    parser.add_argument('-m', '--mlflow-uri', required=True)
+    parser.add_argument('-r', '--resume',
+                        action='store_true')
+    
+    args = parser.parse_args()
+    
+    mlflow.set_tracking_uri(uri=args.mlflow_uri)
     
     # MLflow experiment setup
     mlflow.set_experiment("RoBERTa_LiarPlus_Classification")
@@ -87,10 +102,10 @@ if __name__ == '__main__':
     for param in roberta.parameters():
         param.requires_grad = False  # Freeze all layers
     
-    training_data = LiarPlusDataset("data/train2.tsv")
+    training_data = LiarPlusDataset("data/train2.tsv", tokenizer)
     
     batch_size = 16
     
     train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
     
-    train(train_dataloader, batch_size)
+    train(train_dataloader, batch_size, args.resume)
