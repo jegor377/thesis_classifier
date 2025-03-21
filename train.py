@@ -5,6 +5,7 @@ import mlflow.pytorch
 
 from transformers import RobertaModel, RobertaTokenizer
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 from dataset import LiarPlusDataset
 from model import LiarPlusClassifier
@@ -44,7 +45,7 @@ def train(train_loader: DataLoader, batch_size: int) -> None:
             model.train()
             epoch_loss = 0
             
-            for batch in train_loader:
+            for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False):
                 input_ids = batch["input_ids"].to(device)
                 attention_mask = batch["attention_mask"].to(device)
                 labels = batch["label"].to(device)
@@ -60,7 +61,7 @@ def train(train_loader: DataLoader, batch_size: int) -> None:
             avg_loss = epoch_loss / len(train_loader)
             mlflow.log_metric("loss", avg_loss, step=epoch)
             
-            print(f"Epoch {epoch+1}, Loss: {avg_loss}")
+            tqdm.write(f"Epoch {epoch+1}, Loss: {avg_loss}")
             
             # Save best model
             if avg_loss < best_loss:
@@ -73,6 +74,9 @@ def train(train_loader: DataLoader, batch_size: int) -> None:
 
 
 if __name__ == '__main__':
+    with open("mlflow_uri_config.txt", "r") as f:
+        mlflow.set_tracking_uri(uri=f.read())
+    
     # MLflow experiment setup
     mlflow.set_experiment("RoBERTa_LiarPlus_Classification")
     
