@@ -3,5 +3,5 @@ mlflow_uri_config.txt
 checkpoint.pth
 Untitled.ipynb
 *.pyc
-log.txt
-best_model.pth
+log*.txt
+best_model*.pth

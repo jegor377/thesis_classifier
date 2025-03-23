@@ -66,6 +66,8 @@ def train(train_loader: DataLoader,
             model.train()
             epoch_loss = 0
             
+            train_accuracy = 0
+            
             for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False):
                 input_ids = batch["input_ids"].to(device)
                 attention_mask = batch["attention_mask"].to(device)
@@ -78,11 +80,16 @@ def train(train_loader: DataLoader,
                 optimizer.step()
                 
                 epoch_loss += loss.item()
+                
+                # Calculate accuracy
+                preds = torch.argmax(outputs, dim=-1)
+                train_accuracy += (preds == labels).sum().item()
             
             avg_loss = epoch_loss / len(train_loader)
             mlflow.log_metric("train_loss", avg_loss, step=epoch)
+            mlflow.log_metric("train_acc", train_accuracy, step=epoch)
             
-            tqdm.write(f"Epoch {epoch+1}, Training loss: {avg_loss}")
+            tqdm.write(f"Epoch {epoch+1}, Training accuracy: {train_accuracy}, Training loss: {avg_loss}")
             
             # Validation step
             model.eval()  # Switch to evaluation mode
