@@ -2,15 +2,15 @@ import os
 import torch
 
 
-def save_checkpoint(model, optimizer, epoch, loss, path="checkpoint.pth"):
+def save_checkpoint(model, optimizer, epoch, val_acc, path="checkpoint.pth"):
     checkpoint = {
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
         "epoch": epoch,
-        "loss": loss
+        "val_acc": val_acc
     }
     torch.save(checkpoint, path)
-    print(f"Checkpoint saved at epoch {epoch} with loss {loss:.4f}")
+    print(f"Checkpoint saved at epoch {epoch} with validation accuracy {val_acc:.4f}")
 
 def load_checkpoint(model, optimizer, path="checkpoint.pth", resume=False):
     if os.path.exists(path):
@@ -18,16 +18,16 @@ def load_checkpoint(model, optimizer, path="checkpoint.pth", resume=False):
         model.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         epoch = checkpoint["epoch"]
-        loss = checkpoint["loss"]
+        val_acc = checkpoint["val_acc"]
         if resume:
-            print(f"Checkpoint loaded: Resuming from epoch {epoch+1}, loss {loss:.4f}")
-            return epoch + 1, loss  # Next epoch to train
+            print(f"Checkpoint loaded: Resuming from epoch {epoch+1}, validation accuracy {val_acc:.4f}")
+            return epoch + 1, val_acc  # Next epoch to train
         else:
-            print(f"Checkpoint loaded: Starting from first epoch, loss {loss:.4f}")
-            return 0, loss # Start fresh with existing model
+            print(f"Checkpoint loaded: Starting from first epoch, validation accuracy {val_acc:.4f}")
+            return 0, val_acc # Start fresh with existing model
     else:
         print("No checkpoint found. Starting from scratch.")
-        return 0, float("inf")  # Start fresh
+        return 0, 0 # Start fresh
 
 def load_model(model, path="checkpoint.pth"):
     if os.path.exists(path):

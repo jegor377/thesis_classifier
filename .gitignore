@@ -3,3 +3,4 @@ mlflow_uri_config.txt
 checkpoint.pth
 Untitled.ipynb
 *.pyc
+log.txt
