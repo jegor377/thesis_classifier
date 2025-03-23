@@ -4,3 +4,4 @@ checkpoint.pth
 Untitled.ipynb
 *.pyc
 log.txt
+best_model.pth
