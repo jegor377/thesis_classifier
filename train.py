@@ -10,22 +10,27 @@ from tqdm import tqdm
 
 from dataset import LiarPlusDataset
 from model import LiarPlusClassifier
-from checkpoint_utils import (save_checkpoint, load_checkpoint)
+from checkpoint_utils import (save_checkpoint,
+                              load_checkpoint,
+                              save_best_model)
 
 
 def train(train_loader: DataLoader,
           val_loader: DataLoader,
           batch_size: int,
-          resume: bool=False) -> None:
+          resume: bool=False,
+          reset_epoch: bool=False) -> None:
     with mlflow.start_run():
         # Hyperparameters
         num_classes = 6
         lr = 1e-3
-        epochs = 20
+        epochs = 30
         
         mlflow.log_param("learning_rate", lr)
         mlflow.log_param("batch_size", batch_size)
         mlflow.log_param("epochs", epochs)
+        mlflow.log_param("resume", resume)
+        mlflow.log_param("reset_epoch", reset_epoch)
 
         # Instantiate model
         model = LiarPlusClassifier(roberta, num_classes)
@@ -39,17 +44,22 @@ def train(train_loader: DataLoader,
         
         # Checkpoint Path
         checkpoint_path = "checkpoint.pth"
+        # Best model path
+        best_model_path = "best_model.pth"
         
         # Track best loss for model saving
         # Load Checkpoint (Decide if you want to continue)
         start_epoch, best_val_accuracy = load_checkpoint(model,
                                       optimizer,
                                       checkpoint_path,
-                                      resume)
+                                      resume,
+                                      reset_epoch)
         
         # Early stopping and validation-based checkpointing
-        patience = 3  # Number of epochs to wait before stopping if no improvement
+        patience = 5  # Number of epochs to wait before stopping if no improvement
         patience_counter = 0
+        
+        mlflow.log_param("patience", 5)
 
         # Training loop
         for epoch in range(start_epoch, epochs):
@@ -98,14 +108,16 @@ def train(train_loader: DataLoader,
             mlflow.log_metric("val_accuracy", avg_val_accuracy, step=epoch)
 
             print(f"Epoch {epoch+1}, Validation Loss: {avg_val_loss}, Validation Accuracy: {avg_val_accuracy}")
-              
+            
+            save_checkpoint(model, optimizer, epoch, avg_val_loss, checkpoint_path)
+            
             # Check for early stopping
             if avg_val_accuracy > best_val_accuracy:
                 best_val_accuracy = avg_val_accuracy
                 patience_counter = 0
                 # Save the best model
-                save_checkpoint(model, optimizer, epoch, avg_val_loss, checkpoint_path)
-                mlflow.log_artifact(checkpoint_path)
+                save_best_model(model, optimizer, epoch, avg_val_loss, best_model_path)
+                mlflow.log_artifact(best_model_path)
             else:
                 patience_counter += 1
                 if patience_counter >= patience:
@@ -123,6 +135,8 @@ if __name__ == '__main__':
 
     parser.add_argument('-m', '--mlflow-uri', required=True)
     parser.add_argument('-r', '--resume',
+                        action='store_true')
+    parser.add_argument('-e', '--reset-epoch',
                         action='store_true')
     
     args = parser.parse_args()
@@ -147,4 +161,4 @@ if __name__ == '__main__':
     train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(validation_data, batch_size=batch_size, shuffle=True)
     
-    train(train_dataloader, val_dataloader, batch_size, args.resume)
+    train(train_dataloader, val_dataloader, batch_size, args.resume, args.reset_epoch)

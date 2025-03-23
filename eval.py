@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from dataset import LiarPlusDataset
 from model import LiarPlusClassifier
-from checkpoint_utils import load_model
+from checkpoint_utils import load_best_model
 
 
 def evaluate(model, dataloader, criterion, device):
@@ -50,9 +50,9 @@ if __name__ == '__main__':
     model = LiarPlusClassifier(roberta, num_classes)
     model.to(device)
 
-    # Load the checkpoint (assumes checkpoint.pth is in the project directory)
-    checkpoint_path = "checkpoint.pth"
-    load_model(model, checkpoint_path)
+    # Load the best model (assumes best_model.pth is in the project directory)
+    best_model_path = "best_model.pth"
+    load_best_model(model, best_model_path)
 
     # Prepare the test dataset and dataloader
     test_dataset = LiarPlusDataset("data/test2.tsv", tokenizer)
