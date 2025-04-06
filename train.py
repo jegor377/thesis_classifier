@@ -86,8 +86,9 @@ def train(train_loader: DataLoader,
                 train_accuracy += (preds == labels).sum().item()
             
             avg_loss = epoch_loss / len(train_loader)
+            avg_train_accuracy = train_accuracy / len(train_loader.dataset)
             mlflow.log_metric("train_loss", avg_loss, step=epoch)
-            mlflow.log_metric("train_acc", train_accuracy, step=epoch)
+            mlflow.log_metric("train_acc", avg_train_accuracy, step=epoch)
             
             tqdm.write(f"Epoch {epoch+1}, Training accuracy: {train_accuracy}, Training loss: {avg_loss}")
             
@@ -163,7 +164,7 @@ if __name__ == '__main__':
     training_data = LiarPlusDataset("data/train2.tsv", tokenizer)
     validation_data = LiarPlusDataset("data/val2.tsv", tokenizer)
     
-    batch_size = 16
+    batch_size = 64
     
     train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
     val_dataloader = DataLoader(validation_data, batch_size=batch_size, shuffle=True)
