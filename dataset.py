@@ -14,7 +14,7 @@ LABEL_MAPPING = {
 }
 
 
-class LiarPlusDataset(Dataset):
+class LiarPlusStatementsDataset(Dataset):
     def __init__(self, filepath, tokenizer, max_length=128):
         self.df = pd.read_csv(filepath, sep='\t')
         self.tokenizer = tokenizer
