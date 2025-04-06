@@ -5,3 +5,5 @@ Untitled.ipynb
 *.pyc
 log*.txt
 best_model*.pth
+models/*/*/*.pth
+__pycache__

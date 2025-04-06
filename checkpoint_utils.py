@@ -43,10 +43,10 @@ def save_best_model(model, optimizer, epoch, val_acc, path="best_model.pth"):
     torch.save(best_model, path)
     print(f"Best model saved at epoch {epoch} with validation accuracy {val_acc:.4f}")
 
-def load_best_model(model, path="checkpoint.pth"):
+def load_best_model(model, path="best_model.pth"):
     if os.path.exists(path):
         best_model = torch.load(path)
         model.load_state_dict(best_model["model_state_dict"])
-        print(f"Model loaded from checkpoint.")
+        print(f"Model loaded from best model checkpoint.")
     else:
-        print("No checkpoint found.")
+        print("No best model checkpoint found.")
