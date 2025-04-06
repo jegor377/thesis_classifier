@@ -83,7 +83,7 @@ def train(model: nn.Module,
             mlflow.log_metric("train_loss", avg_loss, step=epoch)
             mlflow.log_metric("train_acc", avg_train_accuracy, step=epoch)
             
-            tqdm.write(f"Epoch {epoch+1}, Training accuracy: {avg_train_accuracy}, Training loss: {avg_loss}")
+            tqdm.write(f"Epoch {epoch+1}, Training Loss: {avg_loss}, Training Accuracy: {avg_train_accuracy}")
             
             # Validation step
             model.eval()  # Switch to evaluation mode
@@ -117,7 +117,7 @@ def train(model: nn.Module,
                 best_val_accuracy = avg_val_accuracy
                 patience_counter = 0
                 # Save the best model
-                save_best_model(model, optimizer, epoch, avg_val_loss, best_model_path)
+                save_best_model(model, optimizer, epoch, best_val_accuracy, best_model_path)
                 #mlflow.log_artifact(best_model_path)
             else:
                 patience_counter += 1
