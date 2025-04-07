@@ -2,10 +2,18 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from transformers import (AutoModel, AutoTokenizer, ElectraModel,
-                          ElectraTokenizer, RobertaModel, RobertaTokenizer,
-                          XLMRobertaModel, XLMRobertaTokenizer, XLNetModel,
-                          XLNetTokenizer)
+from transformers import (
+    AutoModel,
+    AutoTokenizer,
+    ElectraModel,
+    ElectraTokenizer,
+    RobertaModel,
+    RobertaTokenizer,
+    XLMRobertaModel,
+    XLMRobertaTokenizer,
+    XLNetModel,
+    XLNetTokenizer,
+)
 
 from checkpoint_utils import load_best_model
 from datasets.democratic_dataset import LiarPlusStatementsDemocraticDataset
