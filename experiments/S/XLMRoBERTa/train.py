@@ -3,16 +3,16 @@ import argparse
 import mlflow
 import torch
 from torch.utils.data import DataLoader
-from transformers import RobertaModel, RobertaTokenizer
+from transformers import XLMRobertaModel, XLMRobertaTokenizer
 
-from datasets.dataset import LiarPlusStatementsDataset
-from models.s_model import LiarPlusStatementsClassifier
+from datasets.S.dataset import LiarPlusStatementsDataset
+from models.S.model import LiarPlusStatementsClassifier
 from trainer import train
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="train.py",
-        description="Trains LiarPlusStatementsClassifier with RoBERTa",
+        description="Trains LiarPlusStatementsClassifier with XLM-RoBERTa",
     )
 
     parser.add_argument("-m", "--mlflow-uri", required=True)
@@ -24,11 +24,11 @@ if __name__ == "__main__":
     mlflow.set_tracking_uri(uri=args.mlflow_uri)
 
     # MLflow experiment setup
-    mlflow.set_experiment("RoBERTa_LiarPlus_Classification")
+    mlflow.set_experiment("XLM-RoBERTa_LiarPlus_Classification")
 
     # Load RoBERTa tokenizer and model
-    tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
-    roberta = RobertaModel.from_pretrained("roberta-base")
+    tokenizer = XLMRobertaTokenizer.from_pretrained("xlm-roberta-base")
+    roberta = XLMRobertaModel.from_pretrained("xlm-roberta-base")
 
     for param in roberta.parameters():
         param.requires_grad = False  # Freeze all layers
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     train(
         model,
-        "results/RoBERTa/S",
+        "results/XLMRoBERTa/S",
         train_dataloader,
         val_dataloader,
         batch_size,

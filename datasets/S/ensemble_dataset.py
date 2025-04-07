@@ -12,11 +12,12 @@ LABEL_MAPPING = {
 }
 
 
-class LiarPlusStatementsDemocraticDataset(Dataset):
-    def __init__(self, filepath, tokenizers, max_length=128):
+class LiarPlusStatementsEnsembleDataset(Dataset):
+    def __init__(self, filepath, tokenizers, device: torch.device, max_length=128):
         self.df = pd.read_csv(filepath, sep="\t")
         self.tokenizers = tokenizers
         self.max_length = max_length
+        self.device = device
 
     def __len__(self):
         return len(self.df.index)
@@ -29,28 +30,23 @@ class LiarPlusStatementsDemocraticDataset(Dataset):
         label = LABEL_MAPPING[label_str]
 
         # Tokenize the statement
-        encodings = []
+        input_ids = []
+        attention_mask = []
 
         for tokenizer in self.tokenizers:
-            encodings.append(
-                tokenizer(
-                    statement,
-                    truncation=True,
-                    padding="max_length",
-                    max_length=self.max_length,
-                    return_tensors="pt",
-                )
+            encoded = tokenizer(
+                statement,
+                truncation=True,
+                padding="max_length",
+                max_length=self.max_length,
+                return_tensors="pt",
             )
-
-        input_ids = [
-            encoding["input_ids"].squeeze(0) for encoding in encodings
-        ]
-        attention_mask = [
-            encoding["attention_mask"].squeeze(0) for encoding in encodings
-        ]
+            encoded = {k: v.to(self.device).squeeze(0) for k, v in encoded.items()}
+            input_ids.append(encoded["input_ids"])
+            attention_mask.append(encoded["attention_mask"])
 
         return {
-            "input_ids": input_ids,  # Remove batch dim
+            "input_ids": input_ids,
             "attention_mask": attention_mask,
-            "label": torch.tensor(label, dtype=torch.long),  # Ensure tensor
+            "label": torch.tensor(label, dtype=torch.long).to(self.device),  # Ensure tensor
         }

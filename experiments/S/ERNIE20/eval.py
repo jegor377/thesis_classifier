@@ -1,26 +1,22 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from transformers import ElectraModel, ElectraTokenizer
+from transformers import AutoModel, AutoTokenizer
 
 from checkpoint_utils import load_best_model
-from datasets.dataset import LiarPlusStatementsDataset
+from datasets.S.dataset import LiarPlusStatementsDataset
 from evaluator import evaluate
-from models.s_model import LiarPlusStatementsClassifier
+from models.S.model import LiarPlusStatementsClassifier
 
 if __name__ == "__main__":
     # Setup device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Load ELECTRA tokenizer and model
-    tokenizer = ElectraTokenizer.from_pretrained(
-        "google/electra-base-discriminator"
-    )
-    encoder_model = ElectraModel.from_pretrained(
-        "google/electra-base-discriminator"
-    )
+    # Load ERNIE2.0 tokenizer and model
+    tokenizer = AutoTokenizer.from_pretrained("nghuyong/ernie-2.0-base-en")
+    encoder_model = AutoModel.from_pretrained("nghuyong/ernie-2.0-base-en")
     for param in encoder_model.parameters():
-        param.requires_grad = False  # Freeze ELECTRA layers
+        param.requires_grad = False  # Freeze ERNIE2.0 layers
 
     # Instantiate your classifier model
     num_classes = 6
@@ -28,7 +24,7 @@ if __name__ == "__main__":
     model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
-    best_model_path = "results/ELECTRA/S/best_model.pth"
+    best_model_path = "results/ERNIE20/S/best_model.pth"
     load_best_model(model, best_model_path)
 
     # Prepare the test dataset and dataloader

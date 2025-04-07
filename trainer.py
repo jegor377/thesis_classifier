@@ -131,7 +131,7 @@ def train(
                 save_best_model(
                     model, optimizer, epoch, best_val_accuracy, best_model_path
                 )
-                # mlflow.log_artifact(best_model_path)
+                mlflow.log_artifact(best_model_path)
             else:
                 patience_counter += 1
                 if patience_counter >= patience:
@@ -139,4 +139,4 @@ def train(
                     break
 
         # Log final model
-        # mlflow.pytorch.log_model(model, "classifier_model")
+        mlflow.pytorch.log_model(model, "classifier_model")
