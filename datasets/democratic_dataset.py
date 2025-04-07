@@ -42,8 +42,9 @@ class LiarPlusStatementsDemocraticDataset(Dataset):
                 )
             )
 
-        input_ids = [encoding["input_ids"].squeeze(
-            0) for encoding in encodings]
+        input_ids = [
+            encoding["input_ids"].squeeze(0) for encoding in encodings
+        ]
         attention_mask = [
             encoding["attention_mask"].squeeze(0) for encoding in encodings
         ]

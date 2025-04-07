@@ -12,8 +12,9 @@ class LiarPlusStatementsClassifier(nn.Module):
 
     def forward(self, input_ids, attention_mask):
         with torch.no_grad():  # Ensure encoder remains frozen
-            outputs = self.encoder(input_ids=input_ids,
-                                   attention_mask=attention_mask)
+            outputs = self.encoder(
+                input_ids=input_ids, attention_mask=attention_mask
+            )
         # Use [CLS] token output
         cls_output = outputs.last_hidden_state[:, 0, :]
         logits = self.fc(cls_output)  # Pass through trainable classifier

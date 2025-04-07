@@ -11,7 +11,8 @@ from trainer import train
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog="train.py", description="Trains LiarPlusStatementsClassifier with ELECTRA"
+        prog="train.py",
+        description="Trains LiarPlusStatementsClassifier with ELECTRA",
     )
 
     parser.add_argument("-m", "--mlflow-uri", required=True)
@@ -27,9 +28,11 @@ if __name__ == "__main__":
 
     # Load encoder tokenizer and model
     tokenizer = ElectraTokenizer.from_pretrained(
-        "google/electra-base-discriminator")
+        "google/electra-base-discriminator"
+    )
     encoder_model = ElectraModel.from_pretrained(
-        "google/electra-base-discriminator")
+        "google/electra-base-discriminator"
+    )
 
     for param in encoder_model.parameters():
         param.requires_grad = False  # Freeze all layers
@@ -40,9 +43,11 @@ if __name__ == "__main__":
     batch_size = 64
 
     train_dataloader = DataLoader(
-        training_data, batch_size=batch_size, shuffle=True)
+        training_data, batch_size=batch_size, shuffle=True
+    )
     val_dataloader = DataLoader(
-        validation_data, batch_size=batch_size, shuffle=True)
+        validation_data, batch_size=batch_size, shuffle=True
+    )
 
     # Hyperparameters
     num_classes = 6

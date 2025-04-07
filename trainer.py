@@ -46,7 +46,9 @@ def train(
         )
 
         # Early stopping and validation-based checkpointing
-        patience = 5  # Number of epochs to wait before stopping if no improvement
+        patience = (
+            5  # Number of epochs to wait before stopping if no improvement
+        )
         patience_counter = 0
 
         mlflow.log_param("patience", 5)
@@ -58,7 +60,9 @@ def train(
 
             train_accuracy = 0
 
-            for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False):
+            for batch in tqdm(
+                train_loader, desc=f"Epoch {epoch+1}", leave=False
+            ):
                 input_ids = batch["input_ids"].to(device)
                 attention_mask = batch["attention_mask"].to(device)
                 labels = batch["label"].to(device)
@@ -90,7 +94,9 @@ def train(
             val_accuracy = 0
             with torch.no_grad():
                 for batch in tqdm(
-                    val_loader, desc=f"Validation of epoch {epoch + 1}", leave=False
+                    val_loader,
+                    desc=f"Validation of epoch {epoch + 1}",
+                    leave=False,
                 ):
                     input_ids = batch["input_ids"].to(device)
                     attention_mask = batch["attention_mask"].to(device)
@@ -113,8 +119,9 @@ def train(
                 f"Epoch {epoch+1}, Validation Loss: {avg_val_loss}, Validation Accuracy: {avg_val_accuracy}"
             )
 
-            save_checkpoint(model, optimizer, epoch,
-                            avg_val_accuracy, checkpoint_path)
+            save_checkpoint(
+                model, optimizer, epoch, avg_val_accuracy, checkpoint_path
+            )
 
             # Check for early stopping
             if avg_val_accuracy > best_val_accuracy:

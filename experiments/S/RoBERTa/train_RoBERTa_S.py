@@ -11,7 +11,8 @@ from trainer import train
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        prog="train.py", description="Trains LiarPlusStatementsClassifier with RoBERTa"
+        prog="train.py",
+        description="Trains LiarPlusStatementsClassifier with RoBERTa",
     )
 
     parser.add_argument("-m", "--mlflow-uri", required=True)
@@ -38,9 +39,11 @@ if __name__ == "__main__":
     batch_size = 64
 
     train_dataloader = DataLoader(
-        training_data, batch_size=batch_size, shuffle=True)
+        training_data, batch_size=batch_size, shuffle=True
+    )
     val_dataloader = DataLoader(
-        validation_data, batch_size=batch_size, shuffle=True)
+        validation_data, batch_size=batch_size, shuffle=True
+    )
 
     # Hyperparameters
     num_classes = 6

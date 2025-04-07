@@ -31,7 +31,8 @@ if __name__ == "__main__":
     test_dataset = LiarPlusStatementsDataset("data/test2.tsv", tokenizer)
     batch_size = 64
     test_dataloader = DataLoader(
-        test_dataset, batch_size=batch_size, shuffle=False)
+        test_dataset, batch_size=batch_size, shuffle=False
+    )
 
     # Define loss function
     criterion = nn.CrossEntropyLoss()

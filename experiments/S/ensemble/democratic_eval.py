@@ -29,7 +29,8 @@ if __name__ == "__main__":
 
     # Instantiate your classifier model
     best_roberta_model = LiarPlusStatementsClassifier(
-        roberta_model, num_classes)
+        roberta_model, num_classes
+    )
     best_roberta_model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
@@ -38,7 +39,8 @@ if __name__ == "__main__":
 
     # Load tokenizer and pretrained XLM-RoBERTa model
     xlm_roberta_tokenizer = XLMRobertaTokenizer.from_pretrained(
-        "xlm-roberta-base")
+        "xlm-roberta-base"
+    )
     xlm_roberta_model = XLMRobertaModel.from_pretrained("xlm-roberta-base")
     for param in xlm_roberta_model.parameters():
         param.requires_grad = False  # Freeze XLM-RoBERTa layers
@@ -58,13 +60,15 @@ if __name__ == "__main__":
         "google/electra-base-discriminator"
     )
     electra_model = ElectraModel.from_pretrained(
-        "google/electra-base-discriminator")
+        "google/electra-base-discriminator"
+    )
     for param in electra_model.parameters():
         param.requires_grad = False  # Freeze ELECTRA layers
 
     # Instantiate your classifier model
     best_electra_model = LiarPlusStatementsClassifier(
-        electra_model, num_classes)
+        electra_model, num_classes
+    )
     best_electra_model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
@@ -73,14 +77,16 @@ if __name__ == "__main__":
 
     # Load ERNIE2.0 tokenizer and model
     ernie20_tokenizer = AutoTokenizer.from_pretrained(
-        "nghuyong/ernie-2.0-base-en")
+        "nghuyong/ernie-2.0-base-en"
+    )
     ernie20_model = AutoModel.from_pretrained("nghuyong/ernie-2.0-base-en")
     for param in ernie20_model.parameters():
         param.requires_grad = False  # Freeze ERNIE2.0 layers
 
     # Instantiate your classifier model
     best_ernie20_model = LiarPlusStatementsClassifier(
-        ernie20_model, num_classes)
+        ernie20_model, num_classes
+    )
     best_ernie20_model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
@@ -95,7 +101,8 @@ if __name__ == "__main__":
 
     # Instantiate your classifier model
     best_xlnet_model = LiarPlusStatementsClassifierXLNet(
-        xlnet_model, num_classes)
+        xlnet_model, num_classes
+    )
     best_xlnet_model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
@@ -126,7 +133,8 @@ if __name__ == "__main__":
     )
     batch_size = 64
     test_dataloader = DataLoader(
-        test_dataset, batch_size=batch_size, shuffle=False)
+        test_dataset, batch_size=batch_size, shuffle=False
+    )
 
     # Define loss function
     criterion = nn.CrossEntropyLoss()
@@ -144,8 +152,9 @@ if __name__ == "__main__":
             labels = batch["label"].to(device).type(torch.LongTensor)
 
             outputs = (
-                model(input_ids, attention_mask).to(
-                    device).type(torch.FloatTensor)
+                model(input_ids, attention_mask)
+                .to(device)
+                .type(torch.FloatTensor)
             )
             loss = criterion(outputs, labels)
             total_loss += loss.item() * input_ids.size(1)

@@ -14,9 +14,11 @@ if __name__ == "__main__":
 
     # Load ELECTRA tokenizer and model
     tokenizer = ElectraTokenizer.from_pretrained(
-        "google/electra-base-discriminator")
+        "google/electra-base-discriminator"
+    )
     encoder_model = ElectraModel.from_pretrained(
-        "google/electra-base-discriminator")
+        "google/electra-base-discriminator"
+    )
     for param in encoder_model.parameters():
         param.requires_grad = False  # Freeze ELECTRA layers
 
@@ -33,7 +35,8 @@ if __name__ == "__main__":
     test_dataset = LiarPlusStatementsDataset("data/test2.tsv", tokenizer)
     batch_size = 64
     test_dataloader = DataLoader(
-        test_dataset, batch_size=batch_size, shuffle=False)
+        test_dataset, batch_size=batch_size, shuffle=False
+    )
 
     # Define loss function
     criterion = nn.CrossEntropyLoss()
