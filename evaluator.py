@@ -1,6 +1,7 @@
 import torch
 from tqdm import tqdm
 
+
 def evaluate(model, dataloader, criterion, device):
     model.eval()  # Set model to evaluation mode
     total_loss = 0.0

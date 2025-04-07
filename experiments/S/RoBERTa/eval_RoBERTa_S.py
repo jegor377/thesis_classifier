@@ -1,17 +1,14 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from transformers import RobertaTokenizer, RobertaModel
+from transformers import RobertaModel, RobertaTokenizer
 
-
-from datasets.dataset import LiarPlusStatementsDataset
-from models.s_model import LiarPlusStatementsClassifier
 from checkpoint_utils import load_best_model
-
+from datasets.dataset import LiarPlusStatementsDataset
 from evaluator import evaluate
+from models.s_model import LiarPlusStatementsClassifier
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Setup device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -33,7 +30,8 @@ if __name__ == '__main__':
     # Prepare the test dataset and dataloader
     test_dataset = LiarPlusStatementsDataset("data/test2.tsv", tokenizer)
     batch_size = 64
-    test_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    test_dataloader = DataLoader(
+        test_dataset, batch_size=batch_size, shuffle=False)
 
     # Define loss function
     criterion = nn.CrossEntropyLoss()
