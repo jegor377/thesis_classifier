@@ -2,18 +2,18 @@ import torch
 import mlflow
 import argparse
 
-from transformers import ElectraTokenizer, ElectraModel
+from transformers import XLMRobertaTokenizer, XLMRobertaModel
 from torch.utils.data import DataLoader
 
-from dataset import LiarPlusStatementsDataset
-from s_model import LiarPlusStatementsClassifier
+from datasets.dataset import LiarPlusStatementsDataset
+from models.s_model import LiarPlusStatementsClassifier
 from trainer import train
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='train.py',
-        description='Trains LiarPlusStatementsClassifier with ELECTRA')
+        description='Trains LiarPlusStatementsClassifier with XLM-RoBERTa')
 
     parser.add_argument('-m', '--mlflow-uri', required=True)
     parser.add_argument('-r', '--resume',
@@ -26,13 +26,13 @@ if __name__ == '__main__':
     mlflow.set_tracking_uri(uri=args.mlflow_uri)
     
     # MLflow experiment setup
-    mlflow.set_experiment("ELECTRA_LiarPlus_Classification")
+    mlflow.set_experiment("XLM-RoBERTa_LiarPlus_Classification")
     
-    # Load encoder tokenizer and model
-    tokenizer = ElectraTokenizer.from_pretrained("google/electra-base-discriminator")
-    encoder_model = ElectraModel.from_pretrained("google/electra-base-discriminator")
+    # Load RoBERTa tokenizer and model
+    tokenizer = XLMRobertaTokenizer.from_pretrained("xlm-roberta-base")
+    roberta = XLMRobertaModel.from_pretrained("xlm-roberta-base")
     
-    for param in encoder_model.parameters():
+    for param in roberta.parameters():
         param.requires_grad = False  # Freeze all layers
     
     training_data = LiarPlusStatementsDataset("data/train2.tsv", tokenizer)
@@ -49,13 +49,13 @@ if __name__ == '__main__':
     epochs = 30
     
     # Instantiate model
-    model = LiarPlusStatementsClassifier(encoder_model, num_classes)
+    model = LiarPlusStatementsClassifier(roberta, num_classes)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     
     train(
         model,
-        'models/ELECTRA/S',
+        'results/XLMRoBERTa/S',
         train_dataloader,
         val_dataloader,
         batch_size,

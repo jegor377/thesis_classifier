@@ -2,18 +2,18 @@ import torch
 import mlflow
 import argparse
 
-from transformers import XLNetTokenizer, XLNetModel
+from transformers import ElectraTokenizer, ElectraModel
 from torch.utils.data import DataLoader
 
-from dataset import LiarPlusStatementsDataset
-from s_model_xlnet import LiarPlusStatementsClassifierXLNet
+from datasets.dataset import LiarPlusStatementsDataset
+from models.s_model import LiarPlusStatementsClassifier
 from trainer import train
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='train.py',
-        description='Trains LiarPlusStatementsClassifier with XLNet')
+        description='Trains LiarPlusStatementsClassifier with ELECTRA')
 
     parser.add_argument('-m', '--mlflow-uri', required=True)
     parser.add_argument('-r', '--resume',
@@ -26,11 +26,12 @@ if __name__ == '__main__':
     mlflow.set_tracking_uri(uri=args.mlflow_uri)
     
     # MLflow experiment setup
-    mlflow.set_experiment("XLNet_LiarPlus_Classification")
+    mlflow.set_experiment("ELECTRA_LiarPlus_Classification")
     
     # Load encoder tokenizer and model
-    tokenizer = XLNetTokenizer.from_pretrained("xlnet-base-cased")
-    encoder_model = XLNetModel.from_pretrained("xlnet-base-cased")
+    tokenizer = ElectraTokenizer.from_pretrained("google/electra-base-discriminator")
+    encoder_model = ElectraModel.from_pretrained("google/electra-base-discriminator")
+    
     for param in encoder_model.parameters():
         param.requires_grad = False  # Freeze all layers
     
@@ -48,13 +49,13 @@ if __name__ == '__main__':
     epochs = 30
     
     # Instantiate model
-    model = LiarPlusStatementsClassifierXLNet(encoder_model, num_classes)
+    model = LiarPlusStatementsClassifier(encoder_model, num_classes)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     
     train(
         model,
-        'models/XLNet/S',
+        'results/ELECTRA/S',
         train_dataloader,
         val_dataloader,
         batch_size,

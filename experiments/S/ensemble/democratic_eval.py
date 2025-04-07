@@ -9,10 +9,10 @@ from transformers import ElectraTokenizer, ElectraModel
 from transformers import AutoTokenizer, AutoModel
 from transformers import XLNetTokenizer, XLNetModel
 
-from s_model import LiarPlusStatementsClassifier
-from s_model_xlnet import LiarPlusStatementsClassifierXLNet
-from democratic_dataset import LiarPlusStatementsDemocraticDataset
-from democratic_model import DemocraticModelClassifier
+from models.s_model import LiarPlusStatementsClassifier
+from models.s_model_xlnet import LiarPlusStatementsClassifierXLNet
+from datasets.democratic_dataset import LiarPlusStatementsDemocraticDataset
+from models.democratic_model import DemocraticModelClassifier
 from checkpoint_utils import load_best_model
 
 from evaluator import evaluate
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     best_roberta_model.to(device)
     
     # Load the best model (assumes best_model.pth is in the project directory)
-    roberta_best_model_path = "models/RoBERTa/S/best_model.pth"
+    roberta_best_model_path = "results/RoBERTa/S/best_model.pth"
     load_best_model(best_roberta_model, roberta_best_model_path)
         
     # Load tokenizer and pretrained XLM-RoBERTa model
@@ -50,7 +50,7 @@ if __name__ == '__main__':
     best_xlm_roberta_model.to(device)
     
     # Load the best model (assumes best_model.pth is in the project directory)
-    xlm_roberta_best_model_path = "models/XLMRoBERTa/S/best_model.pth"
+    xlm_roberta_best_model_path = "results/XLMRoBERTa/S/best_model.pth"
     load_best_model(best_xlm_roberta_model, xlm_roberta_best_model_path)
     
     # Load ELECTRA tokenizer and model
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     best_electra_model.to(device)
     
     # Load the best model (assumes best_model.pth is in the project directory)
-    electra_best_model_path = "models/ELECTRA/S/best_model.pth"
+    electra_best_model_path = "results/ELECTRA/S/best_model.pth"
     load_best_model(best_electra_model, electra_best_model_path)
     
     # Load ERNIE2.0 tokenizer and model
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     best_ernie20_model.to(device)
     
     # Load the best model (assumes best_model.pth is in the project directory)
-    ernie20_best_model_path = "models/ERNIE20/S/best_model.pth"
+    ernie20_best_model_path = "results/ERNIE20/S/best_model.pth"
     load_best_model(best_ernie20_model, ernie20_best_model_path)
     
     # Load encoder tokenizer and model
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     best_xlnet_model.to(device)
     
     # Load the best model (assumes best_model.pth is in the project directory)
-    xlnet_best_model_path = "models/XLNet/S/best_model.pth"
+    xlnet_best_model_path = "results/XLNet/S/best_model.pth"
     load_best_model(best_xlnet_model, xlnet_best_model_path)
 
     model = DemocraticModelClassifier([

@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+from transformers import XLMRobertaTokenizer, XLMRobertaModel
 
-from transformers import AutoTokenizer, AutoModel
 
-from dataset import LiarPlusStatementsDataset
-from s_model import LiarPlusStatementsClassifier
+from datasets.dataset import LiarPlusStatementsDataset
+from models.s_model import LiarPlusStatementsClassifier
 from checkpoint_utils import load_best_model
 
 from evaluator import evaluate
@@ -15,19 +15,19 @@ if __name__ == '__main__':
     # Setup device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Load ERNIE2.0 tokenizer and model
-    tokenizer = AutoTokenizer.from_pretrained("nghuyong/ernie-2.0-base-en")
-    encoder_model = AutoModel.from_pretrained("nghuyong/ernie-2.0-base-en")
-    for param in encoder_model.parameters():
-        param.requires_grad = False  # Freeze ERNIE2.0 layers
+    # Load tokenizer and pretrained XLM-RoBERTa model
+    tokenizer = XLMRobertaTokenizer.from_pretrained("xlm-roberta-base")
+    roberta = XLMRobertaModel.from_pretrained("xlm-roberta-base")
+    for param in roberta.parameters():
+        param.requires_grad = False  # Freeze XLM-RoBERTa layers
 
     # Instantiate your classifier model
     num_classes = 6
-    model = LiarPlusStatementsClassifier(encoder_model, num_classes)
+    model = LiarPlusStatementsClassifier(roberta, num_classes)
     model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
-    best_model_path = "models/ERNIE20/S/best_model.pth"
+    best_model_path = "results/XLMRoBERTa/S/best_model.pth"
     load_best_model(model, best_model_path)
 
     # Prepare the test dataset and dataloader

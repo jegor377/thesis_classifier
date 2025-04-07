@@ -2,18 +2,18 @@ import torch
 import mlflow
 import argparse
 
-from transformers import AutoTokenizer, AutoModel
+from transformers import RobertaModel, RobertaTokenizer
 from torch.utils.data import DataLoader
 
-from dataset import LiarPlusStatementsDataset
-from s_model import LiarPlusStatementsClassifier
+from datasets.dataset import LiarPlusStatementsDataset
+from models.s_model import LiarPlusStatementsClassifier
 from trainer import train
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='train.py',
-        description='Trains LiarPlusStatementsClassifier with ERNIE 2.0')
+        description='Trains LiarPlusStatementsClassifier with RoBERTa')
 
     parser.add_argument('-m', '--mlflow-uri', required=True)
     parser.add_argument('-r', '--resume',
@@ -26,12 +26,13 @@ if __name__ == '__main__':
     mlflow.set_tracking_uri(uri=args.mlflow_uri)
     
     # MLflow experiment setup
-    mlflow.set_experiment("ERNIE2.0_LiarPlus_Classification")
+    mlflow.set_experiment("RoBERTa_LiarPlus_Classification")
     
-    # Load encoder tokenizer and model
-    tokenizer = AutoTokenizer.from_pretrained("nghuyong/ernie-2.0-base-en")
-    encoder_model = AutoModel.from_pretrained("nghuyong/ernie-2.0-base-en")
-    for param in encoder_model.parameters():
+    # Load RoBERTa tokenizer and model
+    tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
+    roberta = RobertaModel.from_pretrained("roberta-base")
+    
+    for param in roberta.parameters():
         param.requires_grad = False  # Freeze all layers
     
     training_data = LiarPlusStatementsDataset("data/train2.tsv", tokenizer)
@@ -48,13 +49,13 @@ if __name__ == '__main__':
     epochs = 30
     
     # Instantiate model
-    model = LiarPlusStatementsClassifier(encoder_model, num_classes)
+    model = LiarPlusStatementsClassifier(roberta, num_classes)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     
     train(
         model,
-        'models/ERNIE20/S',
+        'results/RoBERTa/S',
         train_dataloader,
         val_dataloader,
         batch_size,
