@@ -48,8 +48,7 @@ def load_checkpoint(
         return 0, 0  # Start fresh
 
 
-def save_best_model(model, optimizer, epoch,
-                    val_acc, path="best_model.pth"):
+def save_best_model(model, optimizer, epoch, val_acc, path="best_model.pth"):
     best_model = {
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
@@ -58,8 +57,8 @@ def save_best_model(model, optimizer, epoch,
     }
     torch.save(best_model, path)
     print(
-        f"Best model saved at epoch {epoch} "
-        f"with validation accuracy {val_acc:.4f}")
+        f"Best model saved at epoch {epoch} " f"with validation accuracy {val_acc:.4f}"
+    )
 
 
 def load_best_model(model, path="best_model.pth"):
