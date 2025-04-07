@@ -13,7 +13,9 @@ LABEL_MAPPING = {
 
 
 class LiarPlusStatementsEnsembleDataset(Dataset):
-    def __init__(self, filepath, tokenizers, device: torch.device, max_length=128):
+    def __init__(
+        self, filepath, tokenizers, device: torch.device, max_length=128
+    ):
         self.df = pd.read_csv(filepath, sep="\t")
         self.tokenizers = tokenizers
         self.max_length = max_length
@@ -41,12 +43,16 @@ class LiarPlusStatementsEnsembleDataset(Dataset):
                 max_length=self.max_length,
                 return_tensors="pt",
             )
-            encoded = {k: v.to(self.device).squeeze(0) for k, v in encoded.items()}
+            encoded = {
+                k: v.to(self.device).squeeze(0) for k, v in encoded.items()
+            }
             input_ids.append(encoded["input_ids"])
             attention_mask.append(encoded["attention_mask"])
 
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
-            "label": torch.tensor(label, dtype=torch.long).to(self.device),  # Ensure tensor
+            "label": torch.tensor(label, dtype=torch.long).to(
+                self.device
+            ),  # Ensure tensor
         }

@@ -22,7 +22,9 @@ from models.S.model import LiarPlusStatementsClassifier
 from models.S.xlnet_model import LiarPlusStatementsClassifierXLNet
 
 
-def evaluate(model, dataloader, criterion) -> None:
+def evaluate(
+    model: nn.Module, dataloader: DataLoader, criterion
+) -> tuple[float, float]:
     # Evaluate the model
     model.eval()  # Set model to evaluation mode
     total_loss = 0.0
@@ -36,7 +38,7 @@ def evaluate(model, dataloader, criterion) -> None:
             labels = batch["label"]
 
             outputs = model(input_ids, attention_mask)
-            
+
             loss = criterion(outputs, labels)
             total_loss += loss.item() * input_ids[0].size(0)
 
@@ -165,9 +167,9 @@ if __name__ == "__main__":
             ernie20_tokenizer,
             # xlnet_tokenizer
         ],
-        device
+        device,
     )
-    
+
     batch_size = 64
     test_dataloader = DataLoader(
         test_dataset, batch_size=batch_size, shuffle=False
@@ -176,10 +178,6 @@ if __name__ == "__main__":
     # Define loss function
     criterion = nn.CrossEntropyLoss()
 
-    avg_loss, accuracy = evaluate(
-        model,
-        test_dataloader,
-        criterion
-    )
-    
+    avg_loss, accuracy = evaluate(model, test_dataloader, criterion)
+
     print(f"Test Loss: {avg_loss:.4f}, Test Accuracy: {accuracy:.4f}")

@@ -13,7 +13,7 @@ LABEL_MAPPING = {
 
 
 class LiarPlusStatementsDataset(Dataset):
-    def __init__(self, filepath: str, tokenizer: any, max_length: int=128):
+    def __init__(self, filepath: str, tokenizer, max_length: int = 128):
         self.df = pd.read_csv(filepath, sep="\t")
         self.tokenizer = tokenizer
         self.max_length = max_length
