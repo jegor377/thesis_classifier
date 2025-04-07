@@ -3,8 +3,7 @@ import os
 import torch
 
 
-def save_checkpoint(model, optimizer, epoch,
-                    val_acc, path="checkpoint.pth"):
+def save_checkpoint(model, optimizer, epoch, val_acc, path="checkpoint.pth"):
     checkpoint = {
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
@@ -57,7 +56,8 @@ def save_best_model(model, optimizer, epoch, val_acc, path="best_model.pth"):
     }
     torch.save(best_model, path)
     print(
-        f"Best model saved at epoch {epoch} " f"with validation accuracy {val_acc:.4f}"
+        f"Best model saved at epoch {epoch} "
+        f"with validation accuracy {val_acc:.4f}"
     )
 
 
@@ -65,6 +65,6 @@ def load_best_model(model, path="best_model.pth"):
     if os.path.exists(path):
         best_model = torch.load(path)
         model.load_state_dict(best_model["model_state_dict"])
-        print(f"Model loaded from best model checkpoint.")
+        print("Model loaded from best model checkpoint.")
     else:
         print("No best model checkpoint found.")
