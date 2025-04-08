@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.functional import F
 
 
 class EnsembleModelClassifier(nn.Module):
@@ -27,8 +28,18 @@ class EnsembleModelClassifier(nn.Module):
         for i, model in enumerate(self.classifiers):
             with torch.no_grad():
                 out = model(input_ids[i], attention_mask[i])
-                outputs.append(out)
 
+                # uncomment if you want to check mean evaluation
+                # outputs.append(out)
+
+                # Voting evaluation
+                outputs.append(F.softmax(out, dim=1))
+
+        # uncomment if you want to check mean evaluation
         # Average outputs
-        avg_output = torch.mean(torch.stack(outputs), dim=0)
-        return avg_output
+        # avg_output = torch.mean(torch.stack(outputs), dim=0)
+        # return avg_output
+
+        # Voting evaluation
+        sum_output = torch.sum(torch.stack(outputs), dim=0)
+        return sum_output
