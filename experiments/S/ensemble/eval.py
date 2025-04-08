@@ -22,23 +22,27 @@ from models.S.model import LiarPlusStatementsClassifier
 from models.S.xlnet_model import LiarPlusStatementsClassifierXLNet
 
 
-def load_model(name: str, best_model_path: str, encoder_tokenizer,
-               encoder_model, classifier, num_classes: int,
-               device: torch.device) -> tuple:
+def load_model(
+    name: str,
+    best_model_path: str,
+    encoder_tokenizer,
+    encoder_model,
+    classifier,
+    num_classes: int,
+    device: torch.device,
+) -> tuple:
     enc_tokenizer = encoder_tokenizer.from_pretrained(name)
     enc_model = encoder_model.from_pretrained(name)
     for param in enc_model.parameters():
         param.requires_grad = False
 
     # Instantiate your classifier model
-    best_model = classifier(
-        enc_model, num_classes
-    )
+    best_model = classifier(enc_model, num_classes)
     best_model.to(device)
-    
+
     # Load the best model (assumes best_model.pth is in the project directory)
     load_best_model(best_model, best_model_path)
-    
+
     return enc_tokenizer, best_model
 
 
@@ -85,9 +89,9 @@ if __name__ == "__main__":
         RobertaModel,
         LiarPlusStatementsClassifier,
         num_classes,
-        device
+        device,
     )
-    
+
     xlm_roberta_tokenizer, best_xlm_roberta_model = load_model(
         "xlm-roberta-base",
         "results/XLMRoBERTa/S/best_model.pth",
@@ -95,9 +99,9 @@ if __name__ == "__main__":
         XLMRobertaModel,
         LiarPlusStatementsClassifier,
         num_classes,
-        device
+        device,
     )
-    
+
     electra_tokenizer, best_electra_model = load_model(
         "google/electra-base-discriminator",
         "results/ELECTRA/S/best_model.pth",
@@ -105,9 +109,9 @@ if __name__ == "__main__":
         ElectraModel,
         LiarPlusStatementsClassifier,
         num_classes,
-        device
+        device,
     )
-    
+
     ernie20_tokenizer, best_ernie20_model = load_model(
         "nghuyong/ernie-2.0-base-en",
         "results/ERNIE20/S/best_model.pth",
@@ -115,9 +119,9 @@ if __name__ == "__main__":
         AutoModel,
         LiarPlusStatementsClassifier,
         num_classes,
-        device
+        device,
     )
-    
+
     xlnet_tokenizer, best_xlnet_model = load_model(
         "xlnet-base-cased",
         "results/XLNet/S/best_model.pth",
@@ -125,7 +129,7 @@ if __name__ == "__main__":
         XLNetModel,
         LiarPlusStatementsClassifierXLNet,
         num_classes,
-        device
+        device,
     )
 
     model = EnsembleModelClassifier(
