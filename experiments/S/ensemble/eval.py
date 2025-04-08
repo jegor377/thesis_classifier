@@ -22,6 +22,26 @@ from models.S.model import LiarPlusStatementsClassifier
 from models.S.xlnet_model import LiarPlusStatementsClassifierXLNet
 
 
+def load_model(name: str, best_model_path: str, encoder_tokenizer,
+               encoder_model, classifier, num_classes: int,
+               device: torch.device) -> tuple:
+    enc_tokenizer = encoder_tokenizer.from_pretrained(name)
+    enc_model = encoder_model.from_pretrained(name)
+    for param in enc_model.parameters():
+        param.requires_grad = False
+
+    # Instantiate your classifier model
+    best_model = classifier(
+        enc_model, num_classes
+    )
+    best_model.to(device)
+    
+    # Load the best model (assumes best_model.pth is in the project directory)
+    load_best_model(best_model, best_model_path)
+    
+    return enc_tokenizer, best_model
+
+
 def evaluate(
     model: nn.Module, dataloader: DataLoader, criterion
 ) -> tuple[float, float]:
@@ -58,93 +78,55 @@ if __name__ == "__main__":
     # Hyperparameters
     num_classes = 6
 
-    # Load tokenizer and pretrained RoBERTa model
-    roberta_tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
-    roberta_model = RobertaModel.from_pretrained("roberta-base")
-    for param in roberta_model.parameters():
-        param.requires_grad = False  # Freeze RoBERTa layers
-
-    # Instantiate your classifier model
-    best_roberta_model = LiarPlusStatementsClassifier(
-        roberta_model, num_classes
+    roberta_tokenizer, best_roberta_model = load_model(
+        "roberta-base",
+        "results/RoBERTa/S/best_model.pth",
+        RobertaTokenizer,
+        RobertaModel,
+        LiarPlusStatementsClassifier,
+        num_classes,
+        device
     )
-    best_roberta_model.to(device)
-
-    # Load the best model (assumes best_model.pth is in the project directory)
-    roberta_best_model_path = "results/RoBERTa/S/best_model.pth"
-    load_best_model(best_roberta_model, roberta_best_model_path)
-
-    # Load tokenizer and pretrained XLM-RoBERTa model
-    xlm_roberta_tokenizer = XLMRobertaTokenizer.from_pretrained(
-        "xlm-roberta-base"
+    
+    xlm_roberta_tokenizer, best_xlm_roberta_model = load_model(
+        "xlm-roberta-base",
+        "results/XLMRoBERTa/S/best_model.pth",
+        XLMRobertaTokenizer,
+        XLMRobertaModel,
+        LiarPlusStatementsClassifier,
+        num_classes,
+        device
     )
-    xlm_roberta_model = XLMRobertaModel.from_pretrained("xlm-roberta-base")
-    for param in xlm_roberta_model.parameters():
-        param.requires_grad = False  # Freeze XLM-RoBERTa layers
-
-    # Instantiate your classifier model
-    best_xlm_roberta_model = LiarPlusStatementsClassifier(
-        xlm_roberta_model, num_classes
+    
+    electra_tokenizer, best_electra_model = load_model(
+        "google/electra-base-discriminator",
+        "results/ELECTRA/S/best_model.pth",
+        ElectraTokenizer,
+        ElectraModel,
+        LiarPlusStatementsClassifier,
+        num_classes,
+        device
     )
-    best_xlm_roberta_model.to(device)
-
-    # Load the best model (assumes best_model.pth is in the project directory)
-    xlm_roberta_best_model_path = "results/XLMRoBERTa/S/best_model.pth"
-    load_best_model(best_xlm_roberta_model, xlm_roberta_best_model_path)
-
-    # Load ELECTRA tokenizer and model
-    electra_tokenizer = ElectraTokenizer.from_pretrained(
-        "google/electra-base-discriminator"
+    
+    ernie20_tokenizer, best_ernie20_model = load_model(
+        "nghuyong/ernie-2.0-base-en",
+        "results/ERNIE20/S/best_model.pth",
+        AutoTokenizer,
+        AutoModel,
+        LiarPlusStatementsClassifier,
+        num_classes,
+        device
     )
-    electra_model = ElectraModel.from_pretrained(
-        "google/electra-base-discriminator"
+    
+    xlnet_tokenizer, best_xlnet_model = load_model(
+        "xlnet-base-cased",
+        "results/XLNet/S/best_model.pth",
+        XLNetTokenizer,
+        XLNetModel,
+        LiarPlusStatementsClassifierXLNet,
+        num_classes,
+        device
     )
-    for param in electra_model.parameters():
-        param.requires_grad = False  # Freeze ELECTRA layers
-
-    # Instantiate your classifier model
-    best_electra_model = LiarPlusStatementsClassifier(
-        electra_model, num_classes
-    )
-    best_electra_model.to(device)
-
-    # Load the best model (assumes best_model.pth is in the project directory)
-    electra_best_model_path = "results/ELECTRA/S/best_model.pth"
-    load_best_model(best_electra_model, electra_best_model_path)
-
-    # Load ERNIE2.0 tokenizer and model
-    ernie20_tokenizer = AutoTokenizer.from_pretrained(
-        "nghuyong/ernie-2.0-base-en"
-    )
-    ernie20_model = AutoModel.from_pretrained("nghuyong/ernie-2.0-base-en")
-    for param in ernie20_model.parameters():
-        param.requires_grad = False  # Freeze ERNIE2.0 layers
-
-    # Instantiate your classifier model
-    best_ernie20_model = LiarPlusStatementsClassifier(
-        ernie20_model, num_classes
-    )
-    best_ernie20_model.to(device)
-
-    # Load the best model (assumes best_model.pth is in the project directory)
-    ernie20_best_model_path = "results/ERNIE20/S/best_model.pth"
-    load_best_model(best_ernie20_model, ernie20_best_model_path)
-
-    # Load encoder tokenizer and model
-    xlnet_tokenizer = XLNetTokenizer.from_pretrained("xlnet-base-cased")
-    xlnet_model = XLNetModel.from_pretrained("xlnet-base-cased")
-    for param in xlnet_model.parameters():
-        param.requires_grad = False  # Freeze XLNet layers
-
-    # Instantiate your classifier model
-    best_xlnet_model = LiarPlusStatementsClassifierXLNet(
-        xlnet_model, num_classes
-    )
-    best_xlnet_model.to(device)
-
-    # Load the best model (assumes best_model.pth is in the project directory)
-    xlnet_best_model_path = "results/XLNet/S/best_model.pth"
-    load_best_model(best_xlnet_model, xlnet_best_model_path)
 
     model = EnsembleModelClassifier(
         [
