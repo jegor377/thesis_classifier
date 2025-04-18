@@ -28,7 +28,7 @@ if __name__ == "__main__":
     model.to(device)
 
     # Load the best model (assumes best_model.pth is in the project directory)
-    best_model_path = "results/ELECTRA/S/best_model.pth"
+    best_model_path = "results/S/ELECTRA/best_model.pth"
     load_best_model(model, best_model_path)
 
     # Prepare the test dataset and dataloader

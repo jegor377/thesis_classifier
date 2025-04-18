@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     train(
         model,
-        "results/ERNIE20/S",
+        "results/S/ERNIE20",
         train_dataloader,
         val_dataloader,
         batch_size,

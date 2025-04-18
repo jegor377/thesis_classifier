@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     roberta_tokenizer, best_roberta_model = load_model(
         "roberta-base",
-        "results/RoBERTa/S/best_model.pth",
+        "results/S/RoBERTa/best_model.pth",
         RobertaTokenizer,
         RobertaModel,
         LiarPlusStatementsClassifier,
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     xlm_roberta_tokenizer, best_xlm_roberta_model = load_model(
         "xlm-roberta-base",
-        "results/XLMRoBERTa/S/best_model.pth",
+        "results/S/XLMRoBERTa/best_model.pth",
         XLMRobertaTokenizer,
         XLMRobertaModel,
         LiarPlusStatementsClassifier,
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     electra_tokenizer, best_electra_model = load_model(
         "google/electra-base-discriminator",
-        "results/ELECTRA/S/best_model.pth",
+        "results/S/ELECTRA/best_model.pth",
         ElectraTokenizer,
         ElectraModel,
         LiarPlusStatementsClassifier,
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     ernie20_tokenizer, best_ernie20_model = load_model(
         "nghuyong/ernie-2.0-base-en",
-        "results/ERNIE20/S/best_model.pth",
+        "results/S/ERNIE20/best_model.pth",
         AutoTokenizer,
         AutoModel,
         LiarPlusStatementsClassifier,
@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     xlnet_tokenizer, best_xlnet_model = load_model(
         "xlnet-base-cased",
-        "results/XLNet/S/best_model.pth",
+        "results/S/XLNet/best_model.pth",
         XLNetTokenizer,
         XLNetModel,
         LiarPlusStatementsClassifierXLNet,

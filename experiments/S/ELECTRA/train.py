@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     train(
         model,
-        "results/ELECTRA/S",
+        "results/S/ELECTRA",
         train_dataloader,
         val_dataloader,
         batch_size,

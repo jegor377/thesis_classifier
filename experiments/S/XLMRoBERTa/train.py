@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     train(
         model,
-        "results/XLMRoBERTa/S",
+        "results/S/XLMRoBERTa",
         train_dataloader,
         val_dataloader,
         batch_size,
