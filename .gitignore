@@ -1,7 +1,7 @@
 mlflow_uri_config.txt
 .ipynb_checkpoints
 checkpoint.pth
-Untitled.ipynb
+*.ipynb
 *.pyc
 log*.txt
 best_model*.pth
