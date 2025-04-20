@@ -40,10 +40,19 @@ if __name__ == "__main__":
     lr = 1e-3
     epochs = 30
     hidden_size = 128
-    columns = ["statement", "justification"]
+    text_columns = [
+        "statement",
+        "subject",
+        "speaker",
+        "job_title",
+        "state",
+        "party_affiliation",
+        "context",
+        "justification",
+    ]
 
-    training_data = LiarPlusDataset("data/train2.tsv", tokenizer, columns)
-    validation_data = LiarPlusDataset("data/val2.tsv", tokenizer, columns)
+    training_data = LiarPlusDataset("data/train2.tsv", tokenizer, text_columns)
+    validation_data = LiarPlusDataset("data/val2.tsv", tokenizer, text_columns)
 
     batch_size = 64
 
@@ -56,7 +65,7 @@ if __name__ == "__main__":
 
     # Instantiate model
     model = LiarPlusMultipleRoBERTasClassifier(
-        roberta, len(columns), hidden_size, num_classes
+        roberta, len(text_columns), hidden_size, num_classes
     )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)

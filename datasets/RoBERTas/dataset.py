@@ -34,7 +34,6 @@ class LiarPlusDataset(Dataset):
         return len(self.df.index)
 
     def __getitem__(self, index: int):
-        print(f"Get {index}")
         item = self.df.iloc[index]
 
         input_ids = []
@@ -56,4 +55,8 @@ class LiarPlusDataset(Dataset):
 
         label = LABEL_MAPPING[item["label"]]
 
-        return input_ids, attention_mask, torch.tensor(label)
+        return {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask,
+            "label": torch.tensor(label),
+        }
