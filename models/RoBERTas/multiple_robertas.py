@@ -4,15 +4,18 @@ import torch.nn.functional as F
 
 
 class LiarPlusMultipleRoBERTasClassifier(nn.Module):
-    def __init__(self, encoder_model, inputs, num_hidden, num_classes):
+    def __init__(
+        self, encoder_model, inputs, num_metadata_len, num_hidden, num_classes
+    ):
         super(LiarPlusMultipleRoBERTasClassifier, self).__init__()
         self.encoder = encoder_model
         self.hl = nn.Linear(
-            self.encoder.config.hidden_size * inputs, num_hidden
+            self.encoder.config.hidden_size * inputs + num_metadata_len,
+            num_hidden,
         )
         self.fc = nn.Linear(num_hidden, num_classes)
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, num_metadata):
         batch_size, num_fields, max_length = input_ids.shape
 
         # reshape from (batch_size, num_fields, max_length) to (batch_size * num_fields, max_length)
@@ -37,8 +40,10 @@ class LiarPlusMultipleRoBERTasClassifier(nn.Module):
         # which is concatenation along seperate fields' CLS token for following classification
         flattened_cls = torch.flatten(cls_reshaped, start_dim=1)
 
+        concatted_inputs = torch.cat([flattened_cls, num_metadata], dim=0)
+
         # pass through hidden layer for better feature selection
-        hl_output = F.relu(self.hl(flattened_cls))
+        hl_output = F.gelu(self.hl(concatted_inputs))
 
         # pass through classification layer
         logits = self.fc(hl_output)

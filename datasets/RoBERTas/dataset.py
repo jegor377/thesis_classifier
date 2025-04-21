@@ -18,11 +18,13 @@ class LiarPlusDataset(Dataset):
         filepath: str,
         tokenizer,
         columns: list[str],
+        num_metadata_cols: list[str],
         max_length: int = 128,
     ):
         self.df = pd.read_csv(filepath, sep="\t")
 
         self.columns = columns
+        self.num_metadata_cols = num_metadata_cols
 
         for column in self.columns:
             self.df[column] = self.df[column].astype(str)
@@ -55,8 +57,11 @@ class LiarPlusDataset(Dataset):
 
         label = LABEL_MAPPING[item["label"]]
 
+        metadata = [item[column] for column in self.num_metadata_cols]
+
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
+            "num_metadata": torch.tensor(metadata),
             "label": torch.tensor(label),
         }

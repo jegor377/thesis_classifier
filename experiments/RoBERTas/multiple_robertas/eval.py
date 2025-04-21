@@ -23,9 +23,29 @@ if __name__ == "__main__":
     # Instantiate your classifier model
     num_classes = 6
     hidden_size = 128
-    columns = ["statement", "justification"]
+    text_columns = [
+        "statement",
+        "subject",
+        "speaker",
+        "job_title",
+        "state",
+        "party_affiliation",
+        "context",
+        "justification",
+    ]
+    num_metadata_cols = [
+        "barely_true_counts",
+        "false_counts",
+        "half_true_counts",
+        "mostly_true_counts",
+        "pants_on_fire_counts",
+    ]
     model = LiarPlusMultipleRoBERTasClassifier(
-        roberta, len(columns), hidden_size, num_classes
+        roberta,
+        len(text_columns),
+        len(num_metadata_cols),
+        hidden_size,
+        num_classes,
     )
     model.to(device)
 
@@ -34,7 +54,9 @@ if __name__ == "__main__":
     load_best_model(model, best_model_path)
 
     # Prepare the test dataset and dataloader
-    test_dataset = LiarPlusDataset("data/test2.tsv", tokenizer, columns)
+    test_dataset = LiarPlusDataset(
+        "data/test2.tsv", tokenizer, text_columns, num_metadata_cols
+    )
     batch_size = 64
     test_dataloader = DataLoader(
         test_dataset, batch_size=batch_size, shuffle=False
