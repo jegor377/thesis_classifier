@@ -21,7 +21,7 @@ class LiarPlusDataset(Dataset):
         num_metadata_cols: list[str],
         max_length: int = 128,
     ):
-        self.df = pd.read_csv(filepath, sep="\t")
+        self.df = pd.read_csv(filepath)
 
         self.columns = columns
         self.num_metadata_cols = num_metadata_cols
@@ -62,6 +62,6 @@ class LiarPlusDataset(Dataset):
         return {
             "input_ids": input_ids,
             "attention_mask": attention_mask,
-            "num_metadata": torch.tensor(metadata),
+            "num_metadata": torch.tensor(metadata).float(),
             "label": torch.tensor(label),
         }

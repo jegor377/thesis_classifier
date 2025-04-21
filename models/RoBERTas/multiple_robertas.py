@@ -40,7 +40,7 @@ class LiarPlusMultipleRoBERTasClassifier(nn.Module):
         # which is concatenation along seperate fields' CLS token for following classification
         flattened_cls = torch.flatten(cls_reshaped, start_dim=1)
 
-        concatted_inputs = torch.cat([flattened_cls, num_metadata], dim=0)
+        concatted_inputs = torch.cat([flattened_cls, num_metadata], dim=1)
 
         # pass through hidden layer for better feature selection
         hl_output = F.gelu(self.hl(concatted_inputs))

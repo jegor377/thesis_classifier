@@ -3,9 +3,10 @@ import argparse
 import mlflow
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset
 from transformers import RobertaModel, RobertaTokenizer
 from tqdm import tqdm
+import time
 
 from datasets.RoBERTas.dataset import LiarPlusDataset
 from models.RoBERTas.multiple_robertas import (
@@ -108,9 +109,10 @@ def train(
                 ):
                     input_ids = batch["input_ids"].to(device)
                     attention_mask = batch["attention_mask"].to(device)
+                    num_metadata = batch["num_metadata"].to(device)
                     labels = batch["label"].to(device)
 
-                    outputs = model(input_ids, attention_mask)
+                    outputs = model(input_ids, attention_mask, num_metadata)
                     loss = criterion(outputs, labels)
                     val_loss += loss.item()
 
@@ -198,16 +200,22 @@ if __name__ == "__main__":
     ]
 
     training_data = LiarPlusDataset(
-        "data/train2.tsv", tokenizer, text_columns, num_metadata_cols
+        "data/normalized/train2.csv",
+        tokenizer,
+        text_columns,
+        num_metadata_cols,
     )
     validation_data = LiarPlusDataset(
-        "data/val2.tsv", tokenizer, text_columns, num_metadata_cols
+        "data/normalized/val2.csv", tokenizer, text_columns, num_metadata_cols
     )
+
+    # speedup the experimentz
+    training_data_subset = Subset(training_data, list(range(1000)))
 
     batch_size = 64
 
     train_dataloader = DataLoader(
-        training_data, batch_size=batch_size, shuffle=True
+        training_data_subset, batch_size=batch_size, shuffle=True
     )
     val_dataloader = DataLoader(
         validation_data, batch_size=batch_size, shuffle=True
@@ -224,6 +232,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
+    start = time.time()
     train(
         model,
         "results/RoBERTas/multiple_robertas",
@@ -235,3 +244,5 @@ if __name__ == "__main__":
         args.resume,
         args.reset_epoch,
     )
+    end = time.time()
+    print(f"Total time took training: {end-start}s")

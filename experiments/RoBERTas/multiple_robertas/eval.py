@@ -2,13 +2,40 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from transformers import RobertaModel, RobertaTokenizer
+from tqdm import tqdm
 
 from checkpoint_utils import load_best_model
 from datasets.RoBERTas.dataset import LiarPlusDataset
-from evaluator import evaluate
 from models.RoBERTas.multiple_robertas import (
     LiarPlusMultipleRoBERTasClassifier,
 )
+
+
+def evaluate(model, dataloader, criterion, device):
+    model.eval()  # Set model to evaluation mode
+    total_loss = 0.0
+    total_correct = 0
+    total_samples = 0
+
+    with torch.no_grad():
+        for batch in tqdm(dataloader, desc="Evaluating"):
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            num_metadata = batch["num_metadata"].to(device)
+            labels = batch["label"].to(device)
+
+            outputs = model(input_ids, attention_mask, num_metadata)
+            loss = criterion(outputs, labels)
+            total_loss += loss.item() * input_ids.size(0)
+
+            preds = torch.argmax(outputs, dim=1)
+            total_correct += (preds == labels).sum().item()
+            total_samples += input_ids.size(0)
+
+    avg_loss = total_loss / total_samples
+    accuracy = total_correct / total_samples
+    return avg_loss, accuracy
+
 
 if __name__ == "__main__":
     # Setup device
@@ -55,7 +82,7 @@ if __name__ == "__main__":
 
     # Prepare the test dataset and dataloader
     test_dataset = LiarPlusDataset(
-        "data/test2.tsv", tokenizer, text_columns, num_metadata_cols
+        "data/normalized/test2.csv", tokenizer, text_columns, num_metadata_cols
     )
     batch_size = 64
     test_dataloader = DataLoader(
