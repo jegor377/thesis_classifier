@@ -8,10 +8,10 @@ from transformers import RobertaModel, RobertaTokenizer
 from tqdm import tqdm
 import time
 
-from datasets.RoBERTas.dataset import LiarPlusDataset
-from models.RoBERTas.multiple_robertas import (
-    LiarPlusMultipleRoBERTasClassifier,
+from datasets.RoBERTas.single_roberta_dataset import (
+    LiarPlusSingleRobertaDataset,
 )
+from models.RoBERTas.single_roberta import LiarPlusSingleRoBERTasClassifier
 
 from checkpoint_utils import load_checkpoint, save_best_model, save_checkpoint
 
@@ -155,7 +155,7 @@ def train(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="train.py",
-        description="Trains LiarPlusMultipleRoBERTasClassifier",
+        description="Trains LiarPlusSingleRoBERTasClassifier",
     )
 
     parser.add_argument("-m", "--mlflow-uri", required=True)
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     mlflow.set_tracking_uri(uri=args.mlflow_uri)
 
     # MLflow experiment setup
-    mlflow.set_experiment("LiarPlusMultipleRoBERTasClassifier")
+    mlflow.set_experiment("LiarPlusSingleRoBERTasClassifier")
 
     # Load RoBERTa tokenizer and model
     tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
@@ -182,14 +182,12 @@ if __name__ == "__main__":
     epochs = 30
     hidden_size = 128
     text_columns = [
-        "statement",
         "subject",
         "speaker",
         "job_title",
         "state",
         "party_affiliation",
         "context",
-        "justification",
     ]
     num_metadata_cols = [
         "barely_true_counts",
@@ -199,13 +197,13 @@ if __name__ == "__main__":
         "pants_on_fire_counts",
     ]
 
-    training_data = LiarPlusDataset(
+    training_data = LiarPlusSingleRobertaDataset(
         "data/normalized/train2.csv",
         tokenizer,
         text_columns,
         num_metadata_cols,
     )
-    validation_data = LiarPlusDataset(
+    validation_data = LiarPlusSingleRobertaDataset(
         "data/normalized/val2.csv", tokenizer, text_columns, num_metadata_cols
     )
 
@@ -222,9 +220,8 @@ if __name__ == "__main__":
     )
 
     # Instantiate model
-    model = LiarPlusMultipleRoBERTasClassifier(
+    model = LiarPlusSingleRoBERTasClassifier(
         roberta,
-        len(text_columns),
         len(num_metadata_cols),
         hidden_size,
         num_classes,
@@ -235,7 +232,7 @@ if __name__ == "__main__":
     start = time.time()
     train(
         model,
-        "results/RoBERTas/multiple_robertas",
+        "results/RoBERTas/single_roberta",
         train_dataloader,
         val_dataloader,
         batch_size,
