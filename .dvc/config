@@ -1,4 +1,4 @@
 [core]
     remote = remote
 ['remote "remote"']
-    url = ssh://conan@mrworkshop.xyz:/home/conan/thesis_dataset
+    url = ssh://conan@cimmerian.win:/home/conan/thesis_dataset
