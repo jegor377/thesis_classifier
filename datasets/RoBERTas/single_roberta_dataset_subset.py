@@ -1,6 +1,7 @@
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
+from sklearn.utils import resample
 
 LABEL_MAPPING = {
     "pants-fire": 0,
@@ -21,16 +22,36 @@ ids2labels = [
 ]
 
 
-class LiarPlusSingleRobertaDataset(Dataset):
+class LiarPlusSingleRobertaDatasetSubset(Dataset):
     def __init__(
         self,
+        total_size: int,
         filepath: str,
         tokenizer,
         str_metadata_cols: list[str],
         num_metadata_cols: list[str],
+        random_state: int | None = None,
         max_length: int = 512,
     ):
-        self.df = pd.read_csv(filepath)
+        num_classes = 6
+        df = pd.read_csv(filepath)
+
+        if total_size != -1:
+            desired_count = total_size // num_classes
+
+            self.df = pd.concat(
+                [
+                    resample(
+                        group,
+                        replace=False,
+                        n_samples=desired_count,
+                        random_state=random_state,
+                    )
+                    for _, group in df.groupby("label")
+                ]
+            )
+        else:
+            self.df = df
 
         self.str_metadata_cols = str_metadata_cols
         self.num_metadata_cols = num_metadata_cols

@@ -3,13 +3,20 @@ import argparse
 import mlflow
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, Subset
+from torch.utils.data import DataLoader
 from transformers import RobertaModel, RobertaTokenizer
 from tqdm import tqdm
 import time
+from torchmetrics.classification import (
+    MulticlassF1Score,
+    MulticlassPrecision,
+    MulticlassRecall,
+)
+from random import sample
 
-from datasets.RoBERTas.single_roberta_dataset import (
-    LiarPlusSingleRobertaDataset,
+from datasets.RoBERTas.single_roberta_dataset_subset import (
+    LiarPlusSingleRobertaDatasetSubset,
+    ids2labels,
 )
 from models.RoBERTas.single_roberta import LiarPlusSingleRoBERTasClassifier
 
@@ -22,6 +29,7 @@ def train(
     train_loader: DataLoader,
     val_loader: DataLoader,
     batch_size: int,
+    num_classes: int,
     lr=1e-3,
     epochs=30,
     resume: bool = False,
@@ -61,12 +69,20 @@ def train(
 
         mlflow.log_param("patience", 5)
 
+        f1 = MulticlassF1Score(num_classes, average=None).to(device)
+        precision = MulticlassPrecision(num_classes, average=None).to(device)
+        recall = MulticlassRecall(num_classes, average=None).to(device)
+
         # Training loop
         for epoch in range(start_epoch, epochs):
             model.train()
             epoch_loss = 0
 
             train_accuracy = 0
+
+            f1.reset()
+            precision.reset()
+            recall.reset()
 
             for batch in tqdm(
                 train_loader, desc=f"Epoch {epoch+1}", leave=False
@@ -88,19 +104,58 @@ def train(
                 preds = torch.argmax(outputs, dim=-1)
                 train_accuracy += (preds == labels).sum().item()
 
+                f1.update(preds, labels)
+                precision.update(preds, labels)
+                recall.update(preds, labels)
+
             avg_loss = epoch_loss / len(train_loader)
             avg_train_accuracy = train_accuracy / len(train_loader.dataset)
             mlflow.log_metric("train_loss", avg_loss, step=epoch)
             mlflow.log_metric("train_acc", avg_train_accuracy, step=epoch)
 
+            f1_res = f1.compute()
+            precision_res = precision.compute()
+            recall_res = recall.compute()
+
+            for i in range(num_classes):
+                mlflow.log_metric(
+                    f"train_f1_{ids2labels[i]}", f1_res[i], step=epoch
+                )
+                mlflow.log_metric(
+                    f"train_precision_{ids2labels[i]}",
+                    precision_res[i],
+                    step=epoch,
+                )
+                mlflow.log_metric(
+                    f"train_recall_{ids2labels[i]}", recall_res[i], step=epoch
+                )
+
+            macro_f1 = f1_res.mean()
+            macro_precision = precision_res.mean()
+            macro_recall = recall_res.mean()
+
+            mlflow.log_metric("train_f1", macro_f1, step=epoch)
+            mlflow.log_metric("train_precision", macro_precision, step=epoch)
+            mlflow.log_metric("train_recall", macro_recall, step=epoch)
+
             tqdm.write(
-                f"Epoch {epoch+1}, Training Loss: {avg_loss}, Training Accuracy: {avg_train_accuracy}"
+                f"Epoch {epoch+1}: "
+                f"Training Loss: {avg_loss}, "
+                f"Training Accuracy: {avg_train_accuracy}, "
+                f"Training F1: {macro_f1}, "
+                f"Training Precision: {macro_precision}, "
+                f"Training Recall: {macro_recall}"
             )
 
             # Validation step
             model.eval()  # Switch to evaluation mode
             val_loss = 0
             val_accuracy = 0
+
+            f1.reset()
+            precision.reset()
+            recall.reset()
+
             with torch.no_grad():
                 for batch in tqdm(
                     val_loader,
@@ -119,14 +174,47 @@ def train(
                     # Calculate accuracy
                     preds = torch.argmax(outputs, dim=-1)
                     val_accuracy += (preds == labels).sum().item()
+                    f1.update(preds, labels)
+                    precision.update(preds, labels)
+                    recall.update(preds, labels)
 
             avg_val_loss = val_loss / len(val_loader)
             avg_val_accuracy = val_accuracy / len(val_loader.dataset)
             mlflow.log_metric("val_loss", avg_val_loss, step=epoch)
             mlflow.log_metric("val_accuracy", avg_val_accuracy, step=epoch)
 
+            f1_res = f1.compute()
+            precision_res = precision.compute()
+            recall_res = recall.compute()
+
+            for i in range(num_classes):
+                mlflow.log_metric(
+                    f"val_f1_{ids2labels[i]}", f1_res[i], step=epoch
+                )
+                mlflow.log_metric(
+                    f"val_precision_{ids2labels[i]}",
+                    precision_res[i],
+                    step=epoch,
+                )
+                mlflow.log_metric(
+                    f"val_recall_{ids2labels[i]}", recall_res[i], step=epoch
+                )
+
+            macro_f1 = f1_res.mean()
+            macro_precision = precision_res.mean()
+            macro_recall = recall_res.mean()
+
+            mlflow.log_metric("val_f1", macro_f1, step=epoch)
+            mlflow.log_metric("val_precision", macro_precision, step=epoch)
+            mlflow.log_metric("val_recall", macro_recall, step=epoch)
+
             print(
-                f"Epoch {epoch+1}, Validation Loss: {avg_val_loss}, Validation Accuracy: {avg_val_accuracy}"
+                f"Epoch {epoch+1}: "
+                f"Validation Loss: {avg_val_loss}, "
+                f"Validation Accuracy: {avg_val_accuracy}, "
+                f"Validation F1: {macro_f1}, "
+                f"Validation Precision: {macro_precision}, "
+                f"Validation Recall: {macro_recall}"
             )
 
             save_checkpoint(
@@ -197,18 +285,24 @@ if __name__ == "__main__":
         "pants_on_fire_counts",
     ]
 
-    training_data = LiarPlusSingleRobertaDataset(
+    subset_size = 1000
+    random_state = 42
+
+    training_data_subset = LiarPlusSingleRobertaDatasetSubset(
+        subset_size,
         "data/normalized/train2.csv",
         tokenizer,
         text_columns,
         num_metadata_cols,
+        random_state,
     )
-    validation_data = LiarPlusSingleRobertaDataset(
-        "data/normalized/val2.csv", tokenizer, text_columns, num_metadata_cols
+    validation_data = LiarPlusSingleRobertaDatasetSubset(
+        -1,
+        "data/normalized/val2.csv",
+        tokenizer,
+        text_columns,
+        num_metadata_cols,
     )
-
-    # speedup the experimentz
-    training_data_subset = Subset(training_data, list(range(1000)))
 
     batch_size = 64
 
@@ -236,6 +330,7 @@ if __name__ == "__main__":
         train_dataloader,
         val_dataloader,
         batch_size,
+        num_classes,
         lr,
         epochs,
         args.resume,

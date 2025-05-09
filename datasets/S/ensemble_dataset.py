@@ -3,12 +3,12 @@ import torch
 from torch.utils.data import Dataset
 
 LABEL_MAPPING = {
-    "false": 0,
-    "barely-true": 1,
-    "half-true": 2,
-    "mostly-true": 3,
-    "true": 4,
-    "pants-fire": 5,
+    "pants-fire": 0,
+    "false": 1,
+    "barely-true": 2,
+    "half-true": 3,
+    "mostly-true": 4,
+    "true": 5,
 }
 
 
