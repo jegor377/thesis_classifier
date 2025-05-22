@@ -12,7 +12,6 @@ from torchmetrics.classification import (
     MulticlassPrecision,
     MulticlassRecall,
 )
-from random import sample
 
 from datasets.RoBERTas.single_roberta_dataset_subset import (
     LiarPlusSingleRobertaDatasetSubset,
@@ -20,7 +19,7 @@ from datasets.RoBERTas.single_roberta_dataset_subset import (
 )
 from models.RoBERTas.single_roberta import LiarPlusSingleRoBERTasClassifier
 
-from checkpoint_utils import load_checkpoint, save_best_model, save_checkpoint
+from utils import load_checkpoint, save_best_model, save_checkpoint
 
 
 def train(

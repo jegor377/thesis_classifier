@@ -15,7 +15,7 @@ from transformers import (
     XLNetTokenizer,
 )
 
-from checkpoint_utils import load_best_model
+from utils import load_best_model
 from datasets.S.ensemble_dataset import LiarPlusStatementsEnsembleDataset
 from models.S.ensemble_model import EnsembleModelClassifier
 from models.S.model import LiarPlusStatementsClassifier

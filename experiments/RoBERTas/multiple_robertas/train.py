@@ -12,14 +12,13 @@ from torchmetrics.classification import (
     MulticlassPrecision,
     MulticlassRecall,
 )
-from random import sample
 
 from datasets.RoBERTas.dataset_subset import LiarPlusDatasetSubset, ids2labels
 from models.RoBERTas.multiple_robertas import (
     LiarPlusMultipleRoBERTasClassifier,
 )
 
-from checkpoint_utils import load_checkpoint, save_best_model, save_checkpoint
+from utils import load_checkpoint, save_best_model, save_checkpoint
 
 
 def train(

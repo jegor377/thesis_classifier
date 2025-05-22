@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from transformers import XLNetModel, XLNetTokenizer
 
-from checkpoint_utils import load_best_model
+from utils import load_best_model
 from datasets.S.dataset import LiarPlusStatementsDataset
 from evaluator import evaluate
 from models.S.xlnet_model import LiarPlusStatementsClassifierXLNet

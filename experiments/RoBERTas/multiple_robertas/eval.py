@@ -9,7 +9,7 @@ from torchmetrics.classification import (
     MulticlassRecall,
 )
 
-from checkpoint_utils import load_best_model
+from utils import load_best_model
 from datasets.RoBERTas.dataset import LiarPlusDataset
 from models.RoBERTas.multiple_robertas import (
     LiarPlusMultipleRoBERTasClassifier,

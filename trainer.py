@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from checkpoint_utils import load_checkpoint, save_best_model, save_checkpoint
+from utils import load_checkpoint, save_best_model, save_checkpoint
 
 
 def train(
