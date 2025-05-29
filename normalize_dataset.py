@@ -24,6 +24,14 @@ if __name__ == "__main__":
     test_df[cols_to_norm] = scaler.transform(test_df[cols_to_norm])
     val_df[cols_to_norm] = scaler.transform(val_df[cols_to_norm])
 
+    # Naprawa danych
+    train_df.loc[train_df["curse"] == "Curse", "curse"] = "curse"
+    train_df["curse"] = train_df["curse"].fillna("non-curse")
+    test_df.loc[test_df["curse"] == "Curse", "curse"] = "curse"
+    test_df["curse"] = test_df["curse"].fillna("non-curse")
+    val_df.loc[val_df["curse"] == "Curse", "curse"] = "curse"
+    val_df["curse"] = val_df["curse"].fillna("non-curse")
+
     train_df.to_csv("data/normalized/train2.csv", index=None)
     test_df.to_csv("data/normalized/test2.csv", index=None)
     val_df.to_csv("data/normalized/val2.csv", index=None)
