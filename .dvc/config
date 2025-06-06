@@ -1,4 +1,5 @@
 [core]
     remote = remote
+    autostage = true
 ['remote "remote"']
     url = ssh://conan@cimmerian.win:/home/conan/thesis_dataset
