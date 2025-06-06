@@ -15,7 +15,6 @@ if __name__ == "__main__":
         "pants_on_fire_counts",
         "grammar_errors",
         "ratio_of_capital_letters",
-        "statement_length",
     ]
 
     scaler = StandardScaler()
