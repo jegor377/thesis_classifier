@@ -4,6 +4,7 @@ checkpoint*.pth
 Untitled.ipynb
 Untitled1.ipynb
 Untitled2.ipynb
+Eval SMJA.ipynb
 Training sample analysis.ipynb
 *.pyc
 log*.txt
