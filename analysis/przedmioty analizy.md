@@ -13,5 +13,3 @@
 - usefulness (Użyteczność) - artykuł uwzględnia potencjalnie przydatne informacje do klasyfikacji (1 - tak, 0 - nie)
 
 - usefull_facts (Przydatne fakty) - przydatne fakty zawarte w artykule, wypunktowane
-
-
