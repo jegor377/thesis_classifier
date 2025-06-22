@@ -8,8 +8,12 @@
 
 - informativness (Informacyjność) - artykuł uwzględnia informacje, które nie znajdują się w statement ani justification (1 - uwzględnia, 0 - nie uwzględnia)
 
-- truthfulness (Prawdziwość) - dodatkowe informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe, PUSTE - nic nie dodaje)
+- truthfulness1 (Prawdziwość 1)- informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe)
+
+- truthfulness2 (Prawdziwość 2) - dodatkowe informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe, PUSTE - nic nie dodaje)
 
 - usefulness (Użyteczność) - artykuł uwzględnia potencjalnie przydatne informacje do klasyfikacji (1 - tak, 0 - nie, -1 - szkodzą, PUSTE - brak dodatkowych informacji po za tym co jest w statement)
 
 - usefull_facts (Przydatne fakty) - przydatne fakty zawarte w artykule, wypunktowane
+
+- reverse (Odwrotność statementu) - Treść artykułu jawnie zaprzecza treści statementu (1 - przekazuje odwrotną tezę, 0 - przekazuje to samo)
