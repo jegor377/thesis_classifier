@@ -4,11 +4,11 @@
 
 - genericity (Generyczność) - artykuł mówi ogólnie (np. o systemie wyborczym USA), czy konkretnie o 2000 roku i Florydzie? (1 - ogólnie, 0 - konkretnie).
 
-- verbosity (Redundancja) - artykuł powtarza te same informacje ze statement bez dodawania nowej wiedzy (1 - powtarza, 0 - dodaje nowe informacje).
+- verbosity (Redundancja) - artykuł powtarza te same informacje ze statement bez dodawania nowej wiedzy do omawianego tematu (1 - powtarza, 0 - dodaje nowe informacje).
 
 - informativness (Informacyjność) - artykuł uwzględnia informacje, które nie znajdują się w statement ani justification (1 - uwzględnia, 0 - nie uwzględnia)
 
-- truthfulness1 (Prawdziwość 1)- informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe)
+- truthfulness1 (Prawdziwość 1) - informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe)
 
 - truthfulness2 (Prawdziwość 2) - dodatkowe informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe, PUSTE - nic nie dodaje)
 
