@@ -6,7 +6,7 @@
 
 - verbosity (Redundancja) - artykuł powtarza te same informacje ze statement bez dodawania nowej wiedzy do omawianego tematu (1 - powtarza, 0 - dodaje nowe informacje).
 
-- informativness (Informacyjność) - artykuł uwzględnia informacje, które nie znajdują się w statement ani justification (1 - uwzględnia, 0 - nie uwzględnia)
+- informativness (Informacyjność) - artykuł uwzględnia informacje, które nie znajdują się w statement ani justification. Interesują nas takie artykuły, które zawierają dodatkową wiedzę, która poprawia klasyfikację. (1 - uwzględnia, 0 - nie uwzględnia)
 
 - truthfulness1 (Prawdziwość 1) - informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe)
 
