@@ -8,7 +8,7 @@
 
 - informativness (Informacyjność) - artykuł uwzględnia informacje, które nie znajdują się w statement ani justification. Interesują nas takie artykuły, które zawierają dodatkową wiedzę, która poprawia klasyfikację. (1 - uwzględnia, 0 - nie uwzględnia)
 
-- truthfulness1 (Prawdziwość 1) - informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe)
+- truthfulness1 (Prawdziwość 1) - informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak lub zbyt ogólna, żeby jednoznacznie stwierdzić, 0 - fałszywe)
 
 - truthfulness2 (Prawdziwość 2) - dodatkowe informacje zawarte w artykule są prawdziwe (2 - tak, 1 - częściowo tak, 0 - fałszywe, PUSTE - nic nie dodaje)
 
