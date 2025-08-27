@@ -1,9 +1,6 @@
 mlflow_uri_config.txt
 .ipynb_checkpoints
 checkpoint*.pth
-Untitled.ipynb
-Untitled1.ipynb
-Untitled2.ipynb
 Eval SMJA.ipynb
 Training sample analysis.ipynb
 *.pyc
@@ -13,3 +10,4 @@ models/*/*/*.pth
 __pycache__
 */__pycache__
 .mypy_cache
+results
