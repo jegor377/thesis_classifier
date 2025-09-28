@@ -22,3 +22,8 @@
 
 - `normalize_dataset.py` - skrypt do normalizacji zbioru danych
 - `utils.py` - paczka do obsługi zapisu/odczytu modeli oraz transmisji na nasz serwer
+
+- `demo_gemma.py` - generator artykułów do programu demonstracyjnego.
+- `demo_pipelines.py` - generator dodatkowych kolumn metadanych, których nie ma w oryginalnym zbiorze LIAR PLUS.
+- `demo_utils.py` - pliki pomocnicze i definicja modelu PyTorch.
+- `demo.py` - główny plik programu demonstracyjnego.
