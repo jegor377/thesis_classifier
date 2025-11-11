@@ -1,5 +1,7 @@
 # Klasyfikator z pracy inżynierskiej
 
+Związany projekt: https://github.com/jegor377/liar_plus_analysis
+
 ## Struktura katalogów
 
 - `data` - katalog zawierający przeanalizowany i przetworzony zbiór danych LIAR PLUS
