@@ -1,6 +1,5 @@
 import torch
 import gradio as gr
-import torch
 import torch.nn.functional as F
 from transformers import RobertaTokenizer, RobertaModel
 from demo_utils import (
@@ -15,10 +14,22 @@ from demo_utils import (
     LiarPlusSingleFinetunedRoBERTasClassifier,
     examples,
     states,
-    ids2labels
+    ids2labels,
 )
 from demo_pipelines import load_pipelines, run_pipeline
 from demo_gemma import generate_article, load_generator
+import os
+
+
+BEST_MODEL_PATH = "best_model.pth"
+
+
+if not os.path.exists(BEST_MODEL_PATH):
+    print(
+        "Couldn't start because the best model couldn't be found in the specified path: "
+        + BEST_MODEL_PATH
+    )
+    exit(1)
 
 
 # MODEL LOADING
@@ -35,7 +46,7 @@ model = LiarPlusSingleFinetunedRoBERTasClassifier(
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
-model.load_state_from_save(torch.load("best_model.pth")["model_state_dict"])
+model.load_state_from_save(torch.load(BEST_MODEL_PATH)["model_state_dict"])
 model.eval()
 
 
@@ -84,7 +95,9 @@ def build_one_hot_input(statement, pipelines):
         if value == "noise":
             value = "word salad"
         idx = label_to_index[column][value]
-        one_hot = F.one_hot(torch.tensor(idx), num_classes=len(one_hot_labels[column]))
+        one_hot = F.one_hot(
+            torch.tensor(idx), num_classes=len(one_hot_labels[column])
+        )
         one_hot_metadata_list.append(one_hot)
 
     return one_hot_metadata_list
@@ -135,10 +148,7 @@ def prediction(
     one_hot_metadata_list = build_one_hot_input(statement, pipelines)
 
     one_hot_metadata = (
-        torch.cat(one_hot_metadata_list, dim=0)
-        .unsqueeze(0)
-        .float()
-        .to(device)
+        torch.cat(one_hot_metadata_list, dim=0).unsqueeze(0).float().to(device)
     )
 
     with torch.no_grad():
@@ -151,7 +161,6 @@ def prediction(
         predicted_idx = torch.argmax(outputs, dim=1).item()
 
     return ids2labels[predicted_idx]
-
 
 
 # GRADIO APP
@@ -174,7 +183,7 @@ def main():
         ],
         outputs=gr.Label(label="Wynik klasyfikacji"),
         examples=examples,
-        allow_flagging="never"
+        allow_flagging="never",
     )
 
     demo.launch()

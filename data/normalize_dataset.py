@@ -3,9 +3,9 @@ import pandas as pd
 
 
 if __name__ == "__main__":
-    train_df = pd.read_csv("data/train2.tsv", sep="\t")
-    test_df = pd.read_csv("data/test2.tsv", sep="\t")
-    val_df = pd.read_csv("data/val2.tsv", sep="\t")
+    train_df = pd.read_csv("train2.tsv", sep="\t")
+    test_df = pd.read_csv("test2.tsv", sep="\t")
+    val_df = pd.read_csv("val2.tsv", sep="\t")
 
     cols_to_norm = [
         "barely_true_counts",
@@ -31,6 +31,6 @@ if __name__ == "__main__":
     val_df.loc[val_df["curse"] == "Curse", "curse"] = "curse"
     val_df["curse"] = val_df["curse"].fillna("non-curse")
 
-    train_df.to_csv("data/normalized/train2.csv", index=None)
-    test_df.to_csv("data/normalized/test2.csv", index=None)
-    val_df.to_csv("data/normalized/val2.csv", index=None)
+    train_df.to_csv("normalized/train2.csv", index=None)
+    test_df.to_csv("normalized/test2.csv", index=None)
+    val_df.to_csv("normalized/val2.csv", index=None)
