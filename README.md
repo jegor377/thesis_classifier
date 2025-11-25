@@ -6,7 +6,7 @@ Aside from the training and analysis, this project also contains the code for th
 
 ## Project structure
 
-- `data` - The input directory with LIAR PLUS dataset taken from previous LIAR PLUS EDA stage (you can access it from [Kaggle](https://www.kaggle.com/datasets/igorsantarek/liar-plus-final-dataset/data).
+- `data` - The input directory with LIAR PLUS dataset taken from previous LIAR PLUS EDA stage (you can access it from [Kaggle](https://www.kaggle.com/datasets/igorsantarek/liar-plus-final-dataset/data)).
     - `data/normalize_dataset.py` - The script for LIAR PLUS dataset normalization.
     - `data/normalized` - The normalized LIAR PLUS dataset, ready for training and classification.
 - `notebooks` - The jupyter notebooks used for training the models.
